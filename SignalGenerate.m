@@ -41,3 +41,6 @@ for i=1:MN  %
     signal = diag(z3);
 
 end
+
+
+save('data.mat', 'noise', 'signal');

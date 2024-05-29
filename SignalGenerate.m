@@ -14,33 +14,37 @@ p3=0.1;
 p4=0.6;
 p5=0.8;
 rho=0.9;%%相关系数
-for i=1:MN  %
-    mu=0;                      %均值
-    sigma=1;                  %标准差，方差的开平方
-    b=sigma/sqrt(2);      %根据标准差求相应的b
-    a=rand(M,N)-0.5;
-    x=mu-b*sign(a).*log(1-2*abs(a)); %%生成符合拉普拉斯分布的随机数列
-    q1=sqrt(vars)*randn(M,N);
-    for m=1:M  
-        for k=1:N
-            if(k==1)
-                z(m,k)=q1(m,k);
-            else
-                z(m,k)=rho*z(m,k-1)+q1(m,k);
+samples_num = 320;
+noise = zeros(M, samples_num);
+signal = zeros(M, samples_num);
+for num = 1:samples_num
+    for i=1:MN  %
+        mu=0;                      %均值
+        sigma=1;                  %标准差，方差的开平方
+        b=sigma/sqrt(2);      %根据标准差求相应的b
+        a=rand(M,N)-0.5;
+        x=mu-b*sign(a).*log(1-2*abs(a)); %%生成符合拉普拉斯分布的随机数列
+        q1=sqrt(vars)*randn(M,N);
+        for m=1:M  
+            for k=1:N
+                if(k==1)
+                    z(m,k)=q1(m,k);
+                else
+                    z(m,k)=rho*z(m,k-1)+q1(m,k);
+                end
             end
+
         end
+        %%%%%%***  p1 ****
+        r1=(x.^p1)*(x.^p1)'/N;   %times conj-transpose
+        %信号加噪声
+        z2=z+x;
+        z3=(z2.^p1)*(z2.^p1)'/N;
+
+        noise(:, num) = diag(r1);
+        signal(:, num) = diag(z3);
 
     end
-    %%%%%%***  p1 ****
-    r1=(x.^p1)*(x.^p1)'/N;   %times conj-transpose
-    %信号加噪声
-    z2=z+x;
-    z3=(z2.^p1)*(z2.^p1)'/N;
-
-    noise = diag(r1);
-    signal = diag(z3);
 
 end
-
-
-save('data.mat', 'noise', 'signal');
+save('data_multiSample.mat', 'noise', 'signal');

@@ -57,16 +57,17 @@ def get_cg(n):  # 生成边
 def build_graph(adj):  # 建立图  每个样本的
     # x = np.ones((K, 1))
     # x1 = edgeMatrix
-    x1 = np.ones((K, 20))
+    x1 = np.ones((K, 20))  # shape = (21, 20)
     x = np.concatenate((np.zeros((1, 1)), noise), axis=0)  # shape = (21,1)
     # edge_attr = np.ones((420, 2))
     edge_attr = edgeMatrix.reshape((420, 1))  # shape = (420,1)
-    H = np.concatenate((x, x1), axis=1)
+    H = np.concatenate((x, x1), axis=1)  # shape = (21, 21)
 
     x = torch.tensor(x, dtype=torch.float)  # 节点特征
     edge_index = torch.tensor(adj, dtype=torch.long)  # 边关系
-    edge_attr = torch.tensor(edge_attr, dtype=torch.float)        # (50x132)x2
-    y = torch.tensor(np.expand_dims(H, axis=0), dtype=torch.float)  # 50x12x12
+    edge_attr = torch.tensor(edge_attr, dtype=torch.float)  # (50x132)x2
+    y = torch.tensor(np.expand_dims(H, axis=0), dtype=torch.float)
+    # shape=(1,21,21) # 50x12x12
     data = Data(x=x, edge_index=edge_index.t().contiguous(),
                 edge_attr=edge_attr, y=y)
     return data

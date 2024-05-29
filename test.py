@@ -54,11 +54,13 @@ def get_cg(n):  # 生成边
     return adj
 
 
-def build_graph(adj):  # 建立图  每个样本的
+def build_graph(adj, cnt):  # 建立图  每个样本的
     # x = np.ones((K, 1))
     # x1 = edgeMatrix
     x1 = np.ones((K, 20))  # shape = (21, 20)
-    x = np.concatenate((np.zeros((1, 1)), noise), axis=0)  # shape = (21,1)
+    # shape = (21,1)
+    x = np.concatenate(
+        (np.zeros((1, 1)), noise[:, cnt].reshape((20, 1))), axis=0)
     # edge_attr = np.ones((420, 2))
     edge_attr = edgeMatrix.reshape((420, 1))  # shape = (420,1)
     H = np.concatenate((x, x1), axis=1)  # shape = (21, 21)
@@ -77,7 +79,7 @@ def proc_data():
     data_list = []
     cg = get_cg(K)   # zhu+ci
     for i in range(sample):
-        data = build_graph(cg)
+        data = build_graph(cg, i)
         data_list.append(data)
     return data_list
 ###########################################################################
@@ -192,7 +194,8 @@ def test():
 
 
 ###########################################################################
-mydata = sio.loadmat("data.mat")
+# mydata = sio.loadmat("data.mat")
+mydata = sio.loadmat("data_multiSample.mat")
 noise = mydata["noise"]
 signal = mydata["signal"]
 edgeMatrix = EdgeGenerate.EdgeGene()
@@ -201,8 +204,8 @@ i = 0
 pu_num = 1  # 主用户
 su_num = 20  # 次用户个数
 num_train = 1
-num_test = 1
-sample = 1
+num_test = 8
+sample = 32
 epoch = 10
 K = pu_num + su_num
 ########################################################################################
